@@ -18,4 +18,9 @@ export class UserService {
   signup(user){
     return this.http.post('/server/api/v1/signup', user, httpOption);
   }
+
+  // tslint:disable-next-line:typedef
+  login(userDTO){
+    return this.http.post('/server/api/v1/login', userDTO, httpOption);
+  }
 }
