@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UserService} from '../../services/user.service';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -11,6 +11,8 @@ import {Observable} from 'rxjs';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   validMessage = '';
+  subscription: Subscription;
+  isLoggedIn: boolean;
  // loginValid: Observable<boolean> = this.userService.login(this.loginForm.value);
 
   constructor(private userService: UserService) { }
@@ -24,26 +26,23 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  login(){
+  login(): void{
     if (this.loginForm.valid){
-    if (this.userService.login(this.loginForm.value)){
-      this.validMessage = 'Logged in successfully';
-
-      // @ts-ignore
-      this.userService.login(this.loginForm.value).subscribe()(
-        data => {
-          console.log(data);
-          this.loginForm.reset();
-          return true;
+      this.subscription = this.userService.login(this.loginForm.value)
+        .subscribe(data => {
+          console.log('subscribed data ' + data);
+          this.isLoggedIn = data;
+          if (data == true){
+            this.validMessage = 'Logged in successfully';
+            this.loginForm.reset();
+          }else{
+            this.validMessage = 'Username or password incorrect. Please try again';
+          }
         },
-        error => {
+          error => {
           return Observable.throw(error);
-        }
-      );
-    }else{
-      this.validMessage = 'Username or password incorrect. Please try again';
-    }
-  }else {
+          });
+    }else {
       this.validMessage = 'Please fill in the information.';
     }
   }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 
 const httpOption = {
@@ -20,7 +21,7 @@ export class UserService {
   }
 
   // tslint:disable-next-line:typedef
-  login(userDTO){
-    return this.http.post('/server/api/v1/login', userDTO, httpOption);
+  login(userDTO): Observable<any>{
+    return this.http.post<boolean>('/server/api/v1/login', userDTO, httpOption);
   }
 }
